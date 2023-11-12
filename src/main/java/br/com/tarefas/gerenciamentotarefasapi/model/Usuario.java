@@ -1,5 +1,6 @@
 package br.com.tarefas.gerenciamentotarefasapi.model;
 
+import br.com.tarefas.gerenciamentotarefasapi.dto.request.DadosAtualizacaoUsuario;
 import br.com.tarefas.gerenciamentotarefasapi.dto.request.DadosCadastroUsuario;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
@@ -17,9 +18,24 @@ public class Usuario {
     private Long id;
     private String nome;
     private String cpf;
+    private boolean ativo;
 
     public Usuario(DadosCadastroUsuario dados) {
         this.nome = dados.nome();
         this.cpf = dados.cpf();
+        this.ativo = true;
+    }
+
+    public void atualizarDados(DadosAtualizacaoUsuario dados) {
+        if (dados.nome() != null) {
+            this.nome = dados.nome();
+        }
+        if (dados.cpf() != null) {
+            this.cpf = dados.cpf();
+        }
+    }
+
+    public void desativar() {
+        this.ativo = false;
     }
 }

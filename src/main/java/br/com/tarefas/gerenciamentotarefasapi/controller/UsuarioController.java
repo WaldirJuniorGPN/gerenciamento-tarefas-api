@@ -1,5 +1,6 @@
 package br.com.tarefas.gerenciamentotarefasapi.controller;
 
+import br.com.tarefas.gerenciamentotarefasapi.dto.request.DadosAtualizacaoUsuario;
 import br.com.tarefas.gerenciamentotarefasapi.dto.request.DadosCadastroUsuario;
 import br.com.tarefas.gerenciamentotarefasapi.dto.response.DadosDetalhamentoUsuario;
 import br.com.tarefas.gerenciamentotarefasapi.dto.response.DadosListagemUsuario;
@@ -32,7 +33,24 @@ public class UsuarioController {
 
     @GetMapping
     public ResponseEntity<Page<DadosListagemUsuario>> listar(Pageable pageable) {
-        var page = this.usuarioRepository.findAll(pageable).map(DadosListagemUsuario::new);
+        var page = this.usuarioRepository.findAllByAtivoTrue(pageable).map(DadosListagemUsuario::new);
         return ResponseEntity.ok(page);
     }
+
+    @PutMapping
+    @Transactional
+    public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoUsuario dados) {
+        var usuario = this.usuarioRepository.getReferenceById(dados.id());
+        usuario.atualizarDados(dados);
+        return ResponseEntity.ok(new DadosDetalhamentoUsuario(usuario));
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity deletar(@PathVariable Long id) {
+        var usuario = this.usuarioRepository.getReferenceById(id);
+        usuario.desativar();
+        return ResponseEntity.noContent().build();
+    }
+
 }
